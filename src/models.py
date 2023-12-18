@@ -13,6 +13,7 @@ class Course(Base):
     course_name = Column(String)
     course_name_cn = Column(String, default='')
     course_units = Column(Integer, default=3)
+    course_prerequisite = Column(String)
     course_type = Column(String)
     update_time = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     is_archived = Column(Boolean, default=False)
@@ -21,7 +22,7 @@ class Course(Base):
     course_descriptions = relationship("CourseDescription", back_populates="course")
     course_notes = relationship("CourseNote", back_populates="course")
     course_lecturers = relationship("CourseLecturer", back_populates="course")
-    course_offer_terms = relationship("CourseOfferTerm", back_populates="course")
+    course_offer_terms = relationship("CourseOfferingTerm", back_populates="course")
 
 
 class CourseDescription(Base):
@@ -56,7 +57,7 @@ class Lecturer(Base):
     email = Column(String)
     edit_time = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    course_lecturers = relationship("CourseOffering", back_populates="lecturer")
+    course_lecturers = relationship("CourseLecturer", back_populates="lecturer")
 
 
 class Term(Base):
@@ -67,7 +68,7 @@ class Term(Base):
     year = Column(Integer)
     start_month = Column(Integer)
 
-    course_offer_terms = relationship("CourseOfferTerm", back_populates="term")
+    course_offer_terms = relationship("CourseOfferingTerm", back_populates="term")
 
 
 class CourseLecturer(Base):

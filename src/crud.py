@@ -20,6 +20,7 @@ def create_course(db: Session, course: schemas.CourseCreate):
                               course_name=course.course_name,
                               course_name_cn=course.course_name_cn,
                               course_units=course.course_units,
+                              course_prerequisite=course.course_prerequisite,
                               course_type=course.course_type)
     db.add(db_course)
     db.commit()
@@ -51,5 +52,34 @@ def create_course_note(db: Session, course_note: schemas.CourseNoteCreate, cours
     return db_cn
 
 
-def get_lecturer(db: Session, skip: int = 0, limit: int = 100):
+def get_lecturers(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Lecturer).offset(skip).limit(limit).all()
+
+
+def get_lecturer(db: Session, lecturer_id: int):
+    return db.query(models.Lecturer).filter(models.Lecturer.id == lecturer_id).first()
+
+
+def create_lecturer(db: Session, lecturer: schemas.LecturerCreate):
+    db_lecturer = models.Lecturer(name=lecturer.name,
+                                  note=lecturer.note,
+                                  homepage=lecturer.homepage,
+                                  email=lecturer.email)
+    db.add(db_lecturer)
+    db.commit()
+    db.refresh(db_lecturer)
+    return db_lecturer
+
+
+def get_terms(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Term).offset(skip).limit(limit).all()
+
+
+def create_term(db: Session, term: schemas.TermCreate):
+    db_term = models.Term(display_name=term.display_name,
+                              year=term.year,
+                              start_month=term.start_month)
+    db.add(db_term)
+    db.commit()
+    db.refresh(db_term)
+    return db_term

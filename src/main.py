@@ -74,7 +74,31 @@ def read_course_notes(skip: int = 0, limit: int = 100, db: Session = Depends(get
     return course_notes
 
 
-@app.get("/lecturer/", response_model=list[schemas.Lecturer])
+@app.post("/lecturers/", response_model=schemas.Lecturer)
+def create_lecturer(lecturer: schemas.LecturerCreate, db: Session = Depends(get_db)):
+    return crud.create_lecturer(db=db, lecturer=lecturer)
+
+
+@app.get("/lecturers/", response_model=list[schemas.Lecturer])
 def read_lecturers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    lecturers = crud.get_lecturer(db, skip=skip, limit=limit)
+    lecturers = crud.get_lecturers(db, skip=skip, limit=limit)
     return lecturers
+
+
+@app.get("/lecturers/{lecturer_id}", response_model=schemas.Lecturer)
+def read_lecturer(lecturer_id: int, db: Session = Depends(get_db)):
+    lecturer = crud.get_lecturer(db, lecturer_id=lecturer_id)
+    if lecturer is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return lecturer
+
+
+@app.post("/terms/", response_model=schemas.Term)
+def create_term(term: schemas.TermCreate, db: Session = Depends(get_db)):
+    return crud.create_term(db=db, term=term)
+
+
+@app.get("/terms/", response_model=list[schemas.Term])
+def read_terms(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    terms = crud.get_terms(db, skip=skip, limit=limit)
+    return terms

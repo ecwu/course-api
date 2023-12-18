@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr, HttpUrl
 import datetime
 
+from src.models import CourseLecturer
+
 
 class CourseDescriptionBase(BaseModel):
     course_description: str
@@ -38,9 +40,9 @@ class CourseNote(CourseNoteBase):
 
 class LecturerBase(BaseModel):
     name: str
-    note: str
-    homepage: HttpUrl
-    email: EmailStr
+    note: str = ''
+    homepage: str = "https://staff.uic.edu.cn"
+    email: str = "placeholder@uic.edu.cn"
 
 
 class LecturerCreate(LecturerBase):
@@ -61,6 +63,7 @@ class CourseBase(BaseModel):
     course_name_cn: str = ''
     course_units: int = 3
     course_type: str | None = None
+    course_prerequisite: str | None = None
     visibility: bool = True
 
 
@@ -73,6 +76,23 @@ class Course(CourseBase):
     course_descriptions: list[CourseDescription] = []
     course_notes: list[CourseNote] = []
     update_time: datetime.datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TermBase(BaseModel):
+    display_name: str
+    year: int = 2005
+    start_month: int = 9
+
+
+class TermCreate(TermBase):
+    pass
+
+
+class Term(TermBase):
+    id: int
 
     class Config:
         from_attributes = True
