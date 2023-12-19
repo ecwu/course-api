@@ -35,8 +35,11 @@ def create_course(course: schemas.CourseCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/courses/", response_model=list[schemas.Course])
-def read_courses(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    courses = crud.get_courses(db, skip=skip, limit=limit)
+def read_courses(code: str | None = None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    if code:
+        courses = crud.query_courses_with_coursecode(db, code=code, skip=skip, limit=limit)
+    else:
+        courses = crud.get_courses(db, skip=skip, limit=limit)
     return courses
 
 

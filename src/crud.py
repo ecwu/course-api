@@ -15,6 +15,10 @@ def get_courses(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Course).offset(skip).limit(limit).all()
 
 
+def query_courses_with_coursecode(db: Session, code: str, skip: int = 0, limit: int = 100):
+    return db.query(models.Course).filter(models.Course.course_code.contains(code)).offset(skip).limit(limit).all()
+
+
 def create_course(db: Session, course: schemas.CourseCreate):
     db_course = models.Course(course_code=course.course_code,
                               course_name=course.course_name,
@@ -75,11 +79,20 @@ def get_terms(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Term).offset(skip).limit(limit).all()
 
 
-def create_term(db: Session, term: schemas.TermCreate):
-    db_term = models.Term(display_name=term.display_name,
-                              year=term.year,
-                              start_month=term.start_month)
-    db.add(db_term)
+def create_course_lecturer(db: Session, course_lecturer: schemas.CourseLecturerCreate):
+    db_cl = models.CourseLecturer(course_id=course_lecturer.course_id,
+                                  lecturer_id=course_lecturer.lecturer_id)
+    db.add(db_cl)
     db.commit()
-    db.refresh(db_term)
-    return db_term
+    db.refresh(db_cl)
+    return db_cl
+
+
+def create_course_offering_term(db: Session, course_offering_term: schemas.CourseOfferingTermCreate):
+    db_cot = models.CourseOfferingTerm(course_id=course_offering_term.course_id,
+                                       term_id=course_offering_term.term_id)
+    db.add(db_cot)
+    db.commit()
+    db.refresh(db_cot)
+    return db_cot
+
